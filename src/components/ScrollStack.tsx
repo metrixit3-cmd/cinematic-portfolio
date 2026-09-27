@@ -194,6 +194,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     updateCardTransforms();
   }, [updateCardTransforms]);
 
+  const measureInitialTops = useCallback(() => {
+    initialTopsRef.current = cardsRef.current.map((card) => {
+      const rect = card.getBoundingClientRect();
+      return rect.top + window.scrollY;
+    });
+  }, []);
+
   const setupLenis = useCallback(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -224,10 +231,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     cardsRef.current = cards;
 
     // Record static natural top positions before any transforms are applied
-    initialTopsRef.current = cards.map((card) => {
-      const rect = card.getBoundingClientRect();
-      return rect.top + window.scrollY;
-    });
+    measureInitialTops();
 
     cards.forEach((card, i) => {
       card.style.zIndex = `${i + 1}`;
@@ -244,7 +248,33 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     setupLenis();
     updateCardTransforms();
 
+    // Re-measure when the viewport or layout genuinely changes, so the
+    // already-approved percentage-based positions resolve correctly
+    // regardless of the rendering environment's reported viewport height
+    // or asset/font load timing.
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    const handleResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        measureInitialTops();
+        updateCardTransforms();
+      }, 150);
+    };
+    window.addEventListener('resize', handleResize);
+
+    let fontsCancelled = false;
+    if (typeof document !== 'undefined' && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (fontsCancelled) return;
+        measureInitialTops();
+        updateCardTransforms();
+      });
+    }
+
     return () => {
+      fontsCancelled = true;
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -270,6 +300,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     onStackComplete,
     setupLenis,
     updateCardTransforms,
+    measureInitialTops,
   ]);
 
   return (
