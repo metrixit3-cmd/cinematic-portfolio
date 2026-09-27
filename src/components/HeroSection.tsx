@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import watermarkImg from '../assets/watermark.png';
 
@@ -36,26 +36,40 @@ const navItems = [
 ];
 
 export const HeroSection: React.FC = () => {
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [isHovered, setIsHovered] = useState(false);
+  const [isCursorActive, setIsCursorActive] = useState(false);
+
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const cursorOffset = useMotionValue(5);
+
+  useEffect(() => {
+    cursorOffset.set(isHovered ? 24 : 5);
+  }, [isHovered, cursorOffset]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      if (!isCursorActive) setIsCursorActive(true);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY, isCursorActive]);
+
+  const rawCursorX = useTransform([mouseX, cursorOffset], ([mx, off]) => (mx as number) - (off as number));
+  const rawCursorY = useTransform([mouseY, cursorOffset], ([my, off]) => (my as number) - (off as number));
+  const cursorSpringX = useSpring(rawCursorX, { damping: 30, stiffness: 350, mass: 0.5 });
+  const cursorSpringY = useSpring(rawCursorY, { damping: 30, stiffness: 350, mass: 0.5 });
 
   return (
     <section className="relative w-screen h-screen overflow-hidden bg-black text-[#E8DFD8] font-sans selection:bg-[#cbb59d] selection:text-black cursor-none">
       {/* ================= 1. MINIMAL CUSTOM CURSOR ================= */}
-      {cursorPos.x >= 0 && (
+      {isCursorActive && (
         <motion.div
           className="fixed top-0 left-0 pointer-events-none z-50 rounded-full border border-[#D4AF37]/40 flex items-center justify-center backdrop-blur-[1px]"
+          style={{ x: cursorSpringX, y: cursorSpringY }}
           animate={{
-            x: cursorPos.x - (isHovered ? 24 : 5),
-            y: cursorPos.y - (isHovered ? 24 : 5),
             width: isHovered ? 48 : 10,
             height: isHovered ? 48 : 10,
             backgroundColor: isHovered ? 'rgba(212, 175, 55, 0.1)' : 'rgba(235, 215, 195, 0.95)',
