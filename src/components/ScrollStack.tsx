@@ -68,13 +68,9 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
   const getScrollData = useCallback(() => {
     if (useWindowScroll) {
-      // visualViewport reflects the actual visible viewport more reliably
-      // than window.innerHeight in embedded/iframe rendering contexts
-      // (e.g. preview tools), where the two can otherwise diverge.
-      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       return {
         scrollTop: window.scrollY,
-        containerHeight: viewportHeight,
+        containerHeight: window.innerHeight,
       };
     } else {
       const scroller = scrollerRef.current;
@@ -198,13 +194,6 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     updateCardTransforms();
   }, [updateCardTransforms]);
 
-  const measureInitialTops = useCallback(() => {
-    initialTopsRef.current = cardsRef.current.map((card) => {
-      const rect = card.getBoundingClientRect();
-      return rect.top + window.scrollY;
-    });
-  }, []);
-
   const setupLenis = useCallback(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -235,7 +224,10 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     cardsRef.current = cards;
 
     // Record static natural top positions before any transforms are applied
-    measureInitialTops();
+    initialTopsRef.current = cards.map((card) => {
+      const rect = card.getBoundingClientRect();
+      return rect.top + window.scrollY;
+    });
 
     cards.forEach((card, i) => {
       card.style.zIndex = `${i + 1}`;
@@ -252,35 +244,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     setupLenis();
     updateCardTransforms();
 
-    // Re-measure when the viewport or layout genuinely changes, so the
-    // already-approved percentage-based positions resolve correctly
-    // regardless of the rendering environment's reported viewport height
-    // or asset/font load timing.
-    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-    const handleResize = () => {
-      if (resizeTimeout) clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        measureInitialTops();
-        updateCardTransforms();
-      }, 150);
-    };
-    window.addEventListener('resize', handleResize);
-    window.visualViewport?.addEventListener('resize', handleResize);
-
-    let fontsCancelled = false;
-    if (typeof document !== 'undefined' && document.fonts?.ready) {
-      document.fonts.ready.then(() => {
-        if (fontsCancelled) return;
-        measureInitialTops();
-        updateCardTransforms();
-      });
-    }
-
     return () => {
-      fontsCancelled = true;
-      window.removeEventListener('resize', handleResize);
-      window.visualViewport?.removeEventListener('resize', handleResize);
-      if (resizeTimeout) clearTimeout(resizeTimeout);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -306,7 +270,6 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     onStackComplete,
     setupLenis,
     updateCardTransforms,
-    measureInitialTops,
   ]);
 
   return (
