@@ -68,9 +68,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
   const getScrollData = useCallback(() => {
     if (useWindowScroll) {
+      // visualViewport reflects the actual visible viewport more reliably
+      // than window.innerHeight in embedded/iframe rendering contexts
+      // (e.g. preview tools), where the two can otherwise diverge.
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       return {
         scrollTop: window.scrollY,
-        containerHeight: window.innerHeight,
+        containerHeight: viewportHeight,
       };
     } else {
       const scroller = scrollerRef.current;
@@ -261,6 +265,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       }, 150);
     };
     window.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('resize', handleResize);
 
     let fontsCancelled = false;
     if (typeof document !== 'undefined' && document.fonts?.ready) {
@@ -274,6 +279,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     return () => {
       fontsCancelled = true;
       window.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('resize', handleResize);
       if (resizeTimeout) clearTimeout(resizeTimeout);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
