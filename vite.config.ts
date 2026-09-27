@@ -5,6 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   optimizeDeps: {
-    include: ['@vercel/analytics/react'],
+    include: ['@vercel/analytics/react', '@vercel/speed-insights/react'],
   },
 });
