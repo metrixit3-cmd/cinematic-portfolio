@@ -48,3 +48,13 @@ npm run dev      # start the dev server
 npm run build    # production build
 npm run lint      # run lint checks
 ```
+
+### Contact form
+
+The contact form sends through [Formspree](https://formspree.io) (free, no backend needed).
+
+1. Create a free form at formspree.io and copy its ID from the endpoint URL (`https://formspree.io/f/XXXXXXXX`).
+2. Copy `.env.example` to `.env.local` and set `VITE_FORMSPREE_ID` to that ID.
+3. For the deployed site, set the same `VITE_FORMSPREE_ID` variable in Vercel: Project Settings → Environment Variables.
+
+Without it set, the form shows an error telling visitors to email you directly instead of silently failing.

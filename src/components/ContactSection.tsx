@@ -34,13 +34,40 @@ const GitHubIcon = () => (
   </svg>
 );
 
+const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID as string | undefined;
+
 export const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    setError(null);
+
+    if (!FORMSPREE_ID) {
+      setError('Form is not connected yet — email metrixit3@gmail.com directly instead.');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setSent(true);
+      } else {
+        setError('Send failed — try again, or email metrixit3@gmail.com directly.');
+      }
+    } catch {
+      setError('Network error — try again, or email metrixit3@gmail.com directly.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -217,11 +244,22 @@ export const ContactSection: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 border border-[#8C6D4F]/50 bg-[#14100D] hover:border-[#D4AF37] hover:bg-[#1A1510] text-[#E8DFD8] hover:text-[#F7E7C4] text-xs font-medium tracking-[0.25em] uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+                  disabled={sending}
+                  className="w-full py-3.5 border border-[#8C6D4F]/50 bg-[#14100D] hover:border-[#D4AF37] hover:bg-[#1A1510] disabled:opacity-50 disabled:cursor-not-allowed text-[#E8DFD8] hover:text-[#F7E7C4] text-xs font-medium tracking-[0.25em] uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  EXECUTE DISPATCH ↗
+                  {sending ? 'TRANSMITTING…' : 'EXECUTE DISPATCH ↗'}
                 </button>
+
+                {error && (
+                  <p
+                    role="alert"
+                    className="text-[11px] text-[#E8A878] leading-relaxed"
+                    style={{ fontFamily: "'Montserrat', sans-serif" }}
+                  >
+                    {error}
+                  </p>
+                )}
 
               </form>
             )}
