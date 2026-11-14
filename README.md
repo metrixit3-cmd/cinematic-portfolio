@@ -1,60 +1,130 @@
-# Cinematic Portfolio — Maslah Bashir Ibrahim
+<div align="center">
 
-Personal portfolio of **Maslah Bashir Ibrahim** — AI Engineer, Full-Stack Developer, ML Enthusiast, and Problem Solver.
+# Maslah Bashir Ibrahim
 
-I build intelligent, scalable, and beautiful web applications. Currently diving deep into the world of AI and Machine Learning.
+### AI Engineer · Full-Stack Developer · ML Enthusiast
 
-## About This Project
+Building intelligent, scalable, and beautiful web applications.
 
-This is a cinematic, dark-themed portfolio site featuring a full-screen video hero, custom cursor interactions, scroll-driven animations, and a bronze/champagne visual language throughout. It's built as a single-page React application with smooth, motion-first section transitions.
+[![Visit Portfolio](https://img.shields.io/badge/Visit%20Portfolio-cinematic--portfolio--lilac.vercel.app-CBB59D?style=for-the-badge&logo=vercel&logoColor=black)](https://cinematic-portfolio-lilac.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-metrixit3--cmd-181717?style=for-the-badge&logo=github)](https://github.com/metrixit3-cmd)
+
+[About](#about) · [Features](#highlights) · [Tech Stack](#tech-stack) · [Run Locally](#run-locally) · [Contact](#contact)
+
+</div>
+
+## Portfolio Preview
+
+**[Open the live portfolio →](https://cinematic-portfolio-lilac.vercel.app)**
+
+[![Preview of Maslah Bashir Ibrahim's portfolio](https://image.thum.io/get/width/1200/crop/750/https://cinematic-portfolio-lilac.vercel.app)](https://cinematic-portfolio-lilac.vercel.app)
+
+## About
+
+This repository contains the personal portfolio of **Maslah Bashir Ibrahim**, an AI Engineer and Full-Stack Developer interested in building useful digital products with thoughtful design and technology. The site presents my background, selected projects, skills, experience, and ways to get in touch.
+
+## Highlights
+
+- Cinematic, full-screen hero experience with video and custom cursor interactions
+- Interactive portrait card with 3D tilt and spotlight effects
+- Scroll-stacked project cards and motion-driven section transitions
+- Dedicated About, Projects, Skills, Experience, and Contact sections
+- Responsive layout for mobile, tablet, and desktop screens
+- Smooth scrolling powered by Lenis
+- Contact form integration with Formspree
+- Vercel Analytics and Speed Insights
 
 ## Tech Stack
 
-- **React 19** + **TypeScript**
-- **Vite** — build tooling
-- **Tailwind CSS 4** — styling
-- **Framer Motion** — animation and gesture interactions
-- **Lenis** — smooth scrolling
+| Area | Technologies |
+| --- | --- |
+| UI | React 19, TypeScript |
+| Build tooling | Vite |
+| Styling | Tailwind CSS 4 |
+| Animation | Framer Motion |
+| Scrolling | Lenis |
+| Deployment and insights | Vercel, Vercel Analytics, Vercel Speed Insights |
+| Quality checks | Oxlint |
 
-## Key Features
-
-- Full-screen cinematic hero video with a custom animated cursor
-- 3D tilt / spotlight-sweep interactive portrait card
-- Scroll-stacking project cards
-- Motion-based entrance animations throughout every section
-- Fully responsive layout, from mobile to large desktop
-
-## Sections
+## Portfolio Sections
 
 1. **Hero** — introduction and primary call to action
-2. **About** — bio and portrait
-3. **Projects** — featured work
-4. **Skills** — technical stack overview
-5. **Experience** — work and education timeline
-6. **Contact** — direct contact links and a message form
+2. **About** — background and portrait
+3. **Projects** — selected work
+4. **Skills** — technical capabilities
+5. **Experience** — experience and education timeline
+6. **Contact** — contact links and message form
+
+## Run Locally
+
+### Requirements
+
+- Node.js and npm
+
+### Setup
+
+```bash
+git clone https://github.com/metrixit3-cmd/cinematic-portfolio.git
+cd cinematic-portfolio
+npm install
+npm run dev
+```
+
+Vite prints the local development URL in the terminal.
+
+### Available scripts
+
+```bash
+npm run dev      # start the development server
+npm run build    # create a production build
+npm run preview  # preview the production build locally
+npm run lint     # run Oxlint
+```
+
+## Contact Form Configuration
+
+The contact form uses [Formspree](https://formspree.io). To enable submissions:
+
+1. Create a form at Formspree and copy its form ID from the endpoint URL (`https://formspree.io/f/XXXXXXXX`).
+2. Copy `.env.example` to `.env.local` and set your ID:
+
+   ```dotenv
+   VITE_FORMSPREE_ID=your_form_id
+   ```
+
+3. Add `VITE_FORMSPREE_ID` to your Vercel project's environment variables for the deployed site.
+
+Without this value, the form directs visitors to contact me by email.
+
+## Project Structure
+
+```text
+.
+├── public/
+│   ├── videos/          # Hero and other public video assets
+│   ├── favicon.svg
+│   └── resume.pdf
+├── src/
+│   ├── assets/          # Images and visual assets
+│   ├── components/      # Portfolio sections and UI components
+│   ├── App.tsx          # Page composition
+│   └── main.tsx         # Application entry point
+├── .env.example
+├── index.html
+└── package.json
+```
 
 ## Contact
 
-- **GitHub:** [github.com/metrixit3-cmd](https://github.com/metrixit3-cmd)
-- **LinkedIn:** [linkedin.com/in/maslah-bashir-79904042b](https://www.linkedin.com/in/maslah-bashir-79904042b/)
-- **Email:** metrixit3@gmail.com
-- **WhatsApp:** [wa.me/254787509941](https://wa.me/254787509941)
+- **Email:** [metrixit3@gmail.com](mailto:metrixit3@gmail.com)
+- **GitHub:** [@metrixit3-cmd](https://github.com/metrixit3-cmd)
+- **LinkedIn:** [Maslah Bashir Ibrahim](https://www.linkedin.com/in/maslah-bashir-79904042b/)
+- **WhatsApp:** [+254 787 509 941](https://wa.me/254787509941)
 
-## Getting Started
+---
 
-```bash
-npm install
-npm run dev      # start the dev server
-npm run build    # production build
-npm run lint      # run lint checks
-```
+<div align="center">
 
-### Contact form
+Made by **Maslah Bashir Ibrahim** · [View the live portfolio](https://cinematic-portfolio-lilac.vercel.app)
 
-The contact form sends through [Formspree](https://formspree.io) (free, no backend needed).
-
-1. Create a free form at formspree.io and copy its ID from the endpoint URL (`https://formspree.io/f/XXXXXXXX`).
-2. Copy `.env.example` to `.env.local` and set `VITE_FORMSPREE_ID` to that ID.
-3. For the deployed site, set the same `VITE_FORMSPREE_ID` variable in Vercel: Project Settings → Environment Variables.
-
-Without it set, the form shows an error telling visitors to email you directly instead of silently failing.
+</div>
